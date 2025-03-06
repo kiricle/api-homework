@@ -5,3 +5,8 @@ type Book struct {
 	Name   string `json:"name" binding:"required"`
 	Author string `json:"author" binding:"required"`
 }
+
+type CreateBookInput struct {
+	Name   string `json:"name" binding:"required"`
+	Author string `json:"author" binding:"required"`
+}

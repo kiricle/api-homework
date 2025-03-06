@@ -4,7 +4,10 @@ import (
 	"context"
 	"errors"
 	"github.com/gin-gonic/gin"
+	_ "github.com/kiricle/api-homework/docs"
 	"github.com/kiricle/api-homework/internal/handlers"
+	"github.com/swaggo/files" // swagger embed files
+	"github.com/swaggo/gin-swagger"
 	"net/http"
 	"time"
 )
@@ -14,9 +17,12 @@ func SetupRouter(bookHandler *handlers.BookHandler) *gin.Engine {
 
 	r.Use(timeoutMiddleware(time.Minute * 2))
 
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	r.GET("/book", bookHandler.GetBooks)
 	r.POST("/book", bookHandler.CreateBook)
 	r.GET("/book/:id", bookHandler.GetBook)
+
 	return r
 }
 

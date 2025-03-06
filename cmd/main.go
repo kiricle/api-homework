@@ -10,6 +10,9 @@ import (
 	"os"
 )
 
+// @title API Server
+// @host localhost:8080
+
 func main() {
 	log := slog.New(slog.NewJSONHandler(os.Stdout,
 		&slog.HandlerOptions{Level: slog.LevelInfo}),
@@ -19,7 +22,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
 	cacheStorage := cache.NewCache()
 
 	bookService := services.NewBookService(postgresStorage, cacheStorage, log)

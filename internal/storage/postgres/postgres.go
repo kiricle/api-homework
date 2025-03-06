@@ -23,6 +23,11 @@ func NewStorage(log *slog.Logger) (*Storage, error) {
 		return nil, err
 	}
 
+	if err := db.Ping(); err != nil {
+		log.Error(err.Error())
+		return nil, err
+	}
+
 	return &Storage{db: db, log: log}, nil
 }
 

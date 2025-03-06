@@ -5,18 +5,23 @@ import (
 	"fmt"
 	"github.com/kiricle/api-homework/internal/models"
 	"github.com/kiricle/api-homework/internal/storage/cache"
-	"github.com/kiricle/api-homework/internal/storage/postgres"
+	//"github.com/kiricle/api-homework/internal/storage/postgres"
 	"log/slog"
 	"time"
 )
 
+type Repository interface {
+	CreateBook(name, author string) error
+	GetBook(id int64) (models.Book, error)
+	GetBooks() ([]models.Book, error)
+}
 type BookService struct {
-	storage *postgres.Storage
+	storage Repository
 	cache   *cache.Cache
 	log     *slog.Logger
 }
 
-func NewBookService(storage *postgres.Storage, cache *cache.Cache, log *slog.Logger) *BookService {
+func NewBookService(storage Repository, cache *cache.Cache, log *slog.Logger) *BookService {
 	return &BookService{storage: storage, cache: cache, log: log}
 }
 
@@ -36,8 +41,8 @@ func (s *BookService) GetBooks() ([]models.Book, error) {
 		s.log.Info("Cache found for /books")
 		return data.([]models.Book), nil
 	}
-
 	s.log.Info("No cache found for /books")
+
 	books, err := s.storage.GetBooks()
 	if err != nil {
 		return nil, err
@@ -49,8 +54,8 @@ func (s *BookService) GetBooks() ([]models.Book, error) {
 
 func (s *BookService) GetBook(id int64) (models.Book, error) {
 	op := fmt.Sprintf("BookService.GetBook %d", id)
-	s.log.Info(op)
 	key := fmt.Sprintf("book/%d", id)
+	s.log.Info(op)
 
 	data := s.cache.Storage.Get(key)
 	if data != nil {
