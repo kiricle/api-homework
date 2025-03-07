@@ -5,23 +5,23 @@ import (
 	"fmt"
 	"github.com/kiricle/api-homework/internal/models"
 	"github.com/kiricle/api-homework/internal/storage/cache"
-	//"github.com/kiricle/api-homework/internal/storage/postgres"
 	"log/slog"
 	"time"
 )
 
-type Repository interface {
-	CreateBook(name, author string) error
-	GetBook(id int64) (models.Book, error)
-	GetBooks() ([]models.Book, error)
-}
 type BookService struct {
-	storage Repository
+	storage BookRepository
 	cache   *cache.Cache
 	log     *slog.Logger
 }
 
-func NewBookService(storage Repository, cache *cache.Cache, log *slog.Logger) *BookService {
+type BookRepository interface {
+	CreateBook(name, author string) error
+	GetBook(id int64) (models.Book, error)
+	GetBooks() ([]models.Book, error)
+}
+
+func NewBookService(storage BookRepository, cache *cache.Cache, log *slog.Logger) *BookService {
 	return &BookService{storage: storage, cache: cache, log: log}
 }
 

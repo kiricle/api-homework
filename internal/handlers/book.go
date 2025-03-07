@@ -3,11 +3,13 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/kiricle/api-homework/internal/models"
-	// gin-swagger middleware
+	//gin-swagger middleware
 	"log/slog"
 	"net/http"
 	"strconv"
 )
+
+//go:generate mockgen -source=book.go -destination=mocks/mock.go
 
 type BookHandler struct {
 	log         *slog.Logger
@@ -40,7 +42,6 @@ func (bh *BookHandler) GetBooks(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
-
 	c.JSON(http.StatusOK, books)
 	bh.log.Info("bookHandler.GetBooks.End")
 }
@@ -59,7 +60,7 @@ func (bh *BookHandler) CreateBook(c *gin.Context) {
 
 	var book models.CreateBookInput
 	if err := c.ShouldBind(&book); err != nil {
-		bh.log.Info("bookHandler.CreateBook.Bind", err)
+		bh.log.Info("bookHandler.CreateBook.Bind", "ERROR:", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
